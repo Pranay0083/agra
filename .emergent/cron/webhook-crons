@@ -1,0 +1,8 @@
+# Managed by Emergent webhook-cron (pod-local syscron). DO NOT EDIT.
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+JOB_ID=0af1c335-651f-4feb-8cc0-9b25e5acfbf4
+WEBHOOK_ENV_FILE=/app/backend/.env
+CRON_API_URL=https://ea.dev.emergentagent.com
+
+* * * * * root JOB_ID=0af1c335-651f-4feb-8cc0-9b25e5acfbf4 CRON_API_URL=https://ea.dev.emergentagent.com /bin/sh /app/.emergent/cron/watch_crons.sh >> /var/log/webhook-cron.log 2>&1

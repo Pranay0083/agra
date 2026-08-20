@@ -1,0 +1,178 @@
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300;0,400;0,700;0,900;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --void: #050505;
+    --panel: #0a0a0a;
+    --surface: #121212;
+    --line: #1a1a1a;
+    --line-hot: #333333;
+    --ink: #f3f4f6;
+    --ink-2: #9ca3af;
+    --ink-3: #6b7280;
+    --crit: #ff3b30;
+    --warn: #ffcc00;
+    --agent: #007aff;
+    --ok: #34c759;
+}
+
+@layer base {
+    :root {
+        --background: 0 0% 2%;
+        --foreground: 220 14% 96%;
+        --card: 0 0% 4%;
+        --card-foreground: 220 14% 96%;
+        --popover: 0 0% 4%;
+        --popover-foreground: 220 14% 96%;
+        --primary: 220 14% 96%;
+        --primary-foreground: 0 0% 2%;
+        --secondary: 0 0% 10%;
+        --secondary-foreground: 220 14% 96%;
+        --muted: 0 0% 10%;
+        --muted-foreground: 220 9% 65%;
+        --accent: 0 0% 12%;
+        --accent-foreground: 220 14% 96%;
+        --destructive: 3 100% 59%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 10%;
+        --input: 0 0% 12%;
+        --ring: 211 100% 50%;
+        --radius: 0px;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        margin: 0;
+        background-color: var(--void);
+        color: var(--ink);
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        -webkit-font-smoothing: antialiased;
+        font-size: 14px;
+    }
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: "Chivo", sans-serif;
+        letter-spacing: -0.02em;
+    }
+    ::selection {
+        background: var(--crit);
+        color: #fff;
+    }
+}
+
+/* grain overlay so pure black never reads flat */
+.grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.hairline-grid {
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    background-size: 56px 56px;
+}
+
+.scanline {
+    position: relative;
+    overflow: hidden;
+}
+.scanline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 122, 255, 0.16) 45%,
+        rgba(0, 122, 255, 0.32) 50%,
+        rgba(0, 122, 255, 0.16) 55%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: sweep 1.6s linear infinite;
+    pointer-events: none;
+}
+@keyframes sweep {
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.cursor-blink::after {
+    content: "\2588";
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+    color: var(--agent);
+}
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.rise {
+    animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.pulse-dot {
+    animation: pulsedot 1.4s ease-in-out infinite;
+}
+@keyframes pulsedot {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.25;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+    background: #262626;
+    border: 2px solid #0a0a0a;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #3d3d3d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scanline::after,
+    .pulse-dot,
+    .cursor-blink::after {
+        animation: none;
+    }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+}

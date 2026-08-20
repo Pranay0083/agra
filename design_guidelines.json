@@ -1,0 +1,130 @@
+{
+  "theme": "dark",
+  "typography": {
+    "headings": {
+      "family": "Chivo, sans-serif",
+      "strategy": "Swiss Brutalist - Technical and authoritative. Use font-black for top-level headers.",
+      "scales": {
+        "h1": "text-4xl sm:text-5xl tracking-tighter",
+        "h2": "text-2xl sm:text-3xl tracking-tight",
+        "h3": "text-xl sm:text-2xl tracking-tight"
+      }
+    },
+    "body": {
+      "family": "JetBrains Mono, monospace",
+      "strategy": "Terminal/Code UI - Strict, legible, monospace for all data, logs, code diffs, and general body text.",
+      "scales": {
+        "base": "text-sm",
+        "small": "text-xs",
+        "labels": "text-xs uppercase tracking-[0.2em]"
+      }
+    }
+  },
+  "colors": {
+    "backgrounds": {
+      "primary": "#050505",
+      "secondary": "#0A0A0A",
+      "surface": "#121212",
+      "overlay": "bg-black/60 backdrop-blur-xl"
+    },
+    "borders": {
+      "default": "#1A1A1A",
+      "active": "#333333"
+    },
+    "text": {
+      "primary": "#F3F4F6",
+      "secondary": "#9CA3AF",
+      "muted": "#6B7280"
+    },
+    "accents": {
+      "critical_vulnerability": "#FF3B30",
+      "warning": "#FFCC00",
+      "agent_activity": "#007AFF",
+      "success": "#34C759"
+    }
+  },
+  "visual enhancers": {
+    "surface_strategy": "Retro-Futurism + Grid Borders. Expose the skeleton, make the grid visible. Use 1px borders (border-border). No soft shadows on data cards; use sharp 1px borders instead.",
+    "textures": "Add subtle noise/grain overlays to break pure black backgrounds. Use CSS repeating-linear-gradient for agent execution log scanlines.",
+    "glassmorphism": "For sticky headers or floating context menus: bg-black/60 with backdrop-blur-xl and 1px border-white/10. Do not use pure transparent backgrounds for overlays."
+  },
+  "component name": {
+    "cards": "Cardless approach. Rectangular, dense. border-collapse style with 1px border-r border-b.",
+    "buttons": "Sharp, 0px border-radius (rounded-none). High contrast hover states (e.g., hover:bg-white hover:text-black).",
+    "badges": "JetBrains Mono, text-xs, uppercase, solid background with high-contrast text matching severity.",
+    "tables": "Dense, monospace font for data, 1px bottom border per row. Hover effect: slight background tint.",
+    "diff_viewer": "Use distinct, readable red/green backgrounds for removed/added code lines with monospace font."
+  },
+  "grids": {
+    "base": "High Density Grid (For Dashboards / Analytics). grid-cols-1 md:grid-cols-3 lg:grid-cols-4. gap-4.",
+    "span_logic": "Primary data/charts: col-span-2 row-span-2. Feeds/Lists: col-span-1 row-span-2. Summary metrics: col-span-1."
+  },
+  "layouts": {
+    "spacing": "Dense but intentional. Use p-4 to p-6 for widgets. Generous spacing (p-12) only for empty states or overarching section padding.",
+    "alignment": "Left-align all data, logs, code, and lists. Only center empty state illustrations.",
+    "structure": "Sidebar navigation (collapsed to icons on small screens) + main content area. Sticky header for active PR context."
+  },
+  "motion": {
+    "micro_interactions": "Minimalist. Instant feedback. Use border color transitions (transition-colors duration-150) rather than transforms.",
+    "loaders": "ASCII art loaders or blinking cursor (terminal style) for Agent state execution.",
+    "data_flow": "Use subtle horizontal scanning line animation for the Agent Graph Trace Timeline."
+  },
+  "accessibility": {
+    "contrast": "Ensure minimum 4.5:1 ratio for normal text. Use APCA guidelines. Critical vulnerabilities must be clearly visible against #050505.",
+    "focus": "focus:ring-2 focus:ring-[#007AFF] focus:outline-none rounded-none.",
+    "motion": "Respect prefers-reduced-motion. Add aria-hidden='true' to purely decorative terminal scanlines.",
+    "testing": "All interactive and key informational elements MUST include a data-testid attribute (e.g., data-testid='run-pipeline-btn')."
+  },
+  "media": {
+    "icons": "Use Phosphor Icons (@phosphor-icons/react) for dense dashboards and developer tools. Thin or Regular weight.",
+    "images": "Limited use. Only for user avatars or abstract background textures for empty states."
+  },
+  "3d libraries": {
+    "strategy": "Not recommended for dense security data unless visualizing a complex dependency graph.",
+    "graph_viz": "If a 3D dependency/RAG graph is needed, use React Force Graph 3D with a transparent background. Otherwise, stick to 2D custom SVGs or HTML/Tailwind for the LangGraph state machine visualization."
+  },
+  "image_urls": {
+    "abstract_code_texture": {
+      "url": "https://images.pexels.com/photos/8134609/pexels-photo-8134609.jpeg",
+      "description": "Dark neon digital number projection, use as subtle background for empty states or login area.",
+      "category": "background"
+    },
+    "developer_avatar_1": {
+      "url": "https://images.unsplash.com/photo-1740252117027-4275d3f84385",
+      "description": "3D Cartoon character avatar for user profile.",
+      "category": "avatar"
+    },
+    "developer_avatar_2": {
+      "url": "https://images.unsplash.com/photo-1740252117013-4fb21771e7ca",
+      "description": "3D Cartoon character avatar with blue hat.",
+      "category": "avatar"
+    }
+  },
+  "component_path": {
+    "ui": "/app/src/components/ui"
+  },
+  "instructions_to_main_agent": [
+    "You are building a dense, highly technical security dashboard. Avoid generic 'SaaS' looks. Embrace a terminal/retro-futuristic vibe with stark contrast.",
+    "Do NOT use HTML native date pickers or selects. Rely heavily on customized Shadcn primitives (.js).",
+    "Never use pure transparent backgrounds for headers/dropdowns. Always use bg-black/60 with backdrop-blur-xl.",
+    "For the Agent Graph Trace Timeline, construct a clean, left-to-right or top-to-bottom pipeline view. Use stark borders and neon accent colors to show state (Running=Blue, Failed=Red, Success=Green).",
+    "Use Phosphor icons. Install via `yarn add @phosphor-icons/react`.",
+    "Apply 'data-testid' to all buttons, links, form inputs, and status badges."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy and 1px sharp borders instead of shadows in this context.",
+    "You MUST NOT apply universal transition (e.g., transition: all). Always add transitions for specific interactive elements excluding transforms.",
+    "You MUST NOT center align the app container. Do not add `.App { text-align: center; }` in the css file.",
+    "Always use modern button styles, in this case sharp edge (rounded-none) buttons with high contrast interactions.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions. Static = dead.",
+    "Subtle grain textures, custom selection states, and terminal-style loaders separate good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories = main agent will use placeholder text which is FORBIDDEN.",
+    "Prioritize using pre-existing components from src/components/ui when applicable.",
+    "Create new components that match the style and conventions of existing components when needed.",
+    "Use 'sonner' for toasts. Located in /app/src/components/ui/sonner.jsx (use .jsx/.js versions for this project)."
+  ]
+}

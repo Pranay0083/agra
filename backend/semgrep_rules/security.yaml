@@ -1,0 +1,109 @@
+rules:
+  - id: python-dangerous-eval
+    languages: [python]
+    severity: ERROR
+    message: "Use of eval()/exec() on dynamic input allows arbitrary code execution (CWE-95)."
+    metadata:
+      cwe: "CWE-95"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: exec(...)
+
+  - id: python-subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: "subprocess called with shell=True enables OS command injection (CWE-78)."
+    metadata:
+      cwe: "CWE-78"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.$FN(..., shell=True, ...)
+          - pattern: os.system(...)
+          - pattern: os.popen(...)
+
+  - id: python-insecure-deserialization
+    languages: [python]
+    severity: ERROR
+    message: "Deserializing untrusted data with pickle/yaml.load leads to RCE (CWE-502)."
+    metadata:
+      cwe: "CWE-502"
+      owasp: "A08:2021 Software and Data Integrity Failures"
+    patterns:
+      - pattern-either:
+          - pattern: pickle.loads(...)
+          - pattern: pickle.load(...)
+          - pattern: yaml.load($X)
+
+  - id: python-weak-hash
+    languages: [python]
+    severity: WARNING
+    message: "MD5/SHA1 are cryptographically broken for security use (CWE-327)."
+    metadata:
+      cwe: "CWE-327"
+      owasp: "A02:2021 Cryptographic Failures"
+    patterns:
+      - pattern-either:
+          - pattern: hashlib.md5(...)
+          - pattern: hashlib.sha1(...)
+
+  - id: python-sql-string-concat
+    languages: [python]
+    severity: ERROR
+    message: "SQL query built via string formatting is vulnerable to SQL injection (CWE-89)."
+    metadata:
+      cwe: "CWE-89"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern-either:
+          - pattern: $CUR.execute("..." % ...)
+          - pattern: $CUR.execute("..." + ...)
+          - pattern: $CUR.execute(f"...")
+
+  - id: python-requests-verify-disabled
+    languages: [python]
+    severity: ERROR
+    message: "TLS certificate verification disabled (verify=False) enables MITM (CWE-295)."
+    metadata:
+      cwe: "CWE-295"
+      owasp: "A02:2021 Cryptographic Failures"
+    pattern: requests.$FN(..., verify=False, ...)
+
+  - id: js-eval-injection
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: "eval()/Function() on dynamic input allows arbitrary code execution (CWE-95)."
+    metadata:
+      cwe: "CWE-95"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: new Function(...)
+
+  - id: js-child-process-exec
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: "child_process.exec with interpolated input enables command injection (CWE-78)."
+    metadata:
+      cwe: "CWE-78"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern-either:
+          - pattern: $CP.exec(...)
+          - pattern: $CP.execSync(...)
+
+  - id: js-inner-html-xss
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: "Assigning to innerHTML with untrusted data causes DOM XSS (CWE-79)."
+    metadata:
+      cwe: "CWE-79"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern-either:
+          - pattern: $EL.innerHTML = $X
+          - pattern: $EL.outerHTML = $X
+          - pattern: document.write(...)

@@ -1,0 +1,39 @@
+{
+  "summary": "Full backend + frontend regression on the Autonomous PR Security Reviewer. 19/19 pytest cases pass after correcting one test payload. All targeted UI flows (Overview KPIs & health, Reviews filters, Simulator run end-to-end, Review detail tabs + trace + disabled publish for simulation, Analytics charts, Policies CRUD + similarity probe backed by supabase-pgvector, Settings health + webhook + Supabase SQL) render and behave as specified. Node-express simulation completed in ~108s and produced 14 MCP tool violations (bandit/semgrep/eslint/pattern mix) and 7 LLM findings with severity/CWE/suggested_code. Python-flask simulation validates supervisor->tooling->rag->synthesis->validator->finalize trace all SUCCESS, tool_violations from bandit+semgrep, retrieved_policies with backend=supabase-pgvector and non-zero cosine scores, non-zero tokens/cost, validation_attempts<=3, and 100% line-anchor compliance (every finding file_path==submitted and line within file range). Webhook HMAC accepts valid ping (200 pong), rejects missing/tampered signatures (403), ignores closed PRs, and de-dupes on X-GitHub-Delivery. Policies search returns 5 ranked hits with backend=supabase-pgvector and SQL-injection-related top hit.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/webhooks/github", "issue": "If a pull_request payload is missing repository.owner.login the handler raises KeyError and returns 500 (see server.py:278). GitHub always sends it, but a hardened webhook should 400 with a validation error instead of 500 to avoid noisy alerts on malformed inputs."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Review detail (multiple tab panels) and Analytics", "issues": ["Recharts logs repeated 'width(-1) height(-1)' warnings on initial mount because ResponsiveContainer briefly measures a zero-size parent (tabs mounted while hidden). Non-blocking, but sets minWidth/minHeight or aspect to silence and avoid a first-paint layout jump."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Optional hardening: validate repository.owner.login (and other required GitHub webhook fields) in server.py github_webhook handler and return 400 on missing keys instead of a 500 stack trace.",
+    "Optional polish: give Recharts ResponsiveContainers a minHeight or explicit height on tab panels to suppress width=-1 warnings and prevent first-paint reflow."
+  ],
+  "critical_code_review_comments": [
+    "server.py github_webhook: `repo['owner']['login']` is dereferenced before schema validation. Wrap with Pydantic model or .get(...) with an HTTPException(400) so malformed payloads don't produce 500s and pollute logs.",
+    "GET /api/reviews list endpoint drops findings/tool_violations from each row (returns 0/0) while GET /api/reviews/{id} has full data. This is fine but should be documented / typed so future callers do not assume list rows carry findings."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/__init__.py"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "Created 4 review runs (python-flask x2, node-express x1 via API, node-express x1 via UI) and one custom policy 'TEST_UI_Custom_Policy' that was created and then deleted through the Policies UI. All TEST_ prefixed policies created via pytest are cleaned up in class teardown.",
+  "should_call_test_agent_after_fix": false,
+  "should_main_agent_self_test": true,
+  "test_credentials": "n/a - dashboard is open (no auth). External keys already in /app/backend/.env.",
+  "context_for_next_testing_agent": "Backend pytest suite lives at /app/backend/tests/backend_test.py and runs under the pre-configured pytest.ini (xdist -n 2 loadscope). Simulate runs take ~50-120s each (real Gemini calls), so keep poll timeouts >=150s. Webhook idempotency test requires repository.owner.login in the payload or the handler 500s (open bug). Frontend: TID map in /app/frontend/src/constants/testIds.js; all interactive elements have data-testid. Recharts width=-1 warnings on tab panels are cosmetic.",
+  "rca_of_the_issue": "N/A - no blocking failures. The only backend imperfection is missing input validation for GitHub webhook repository.owner.login, which surfaces as 500 rather than 400 when the field is absent. Fix: guard the field extraction with Pydantic model_validate() or dict.get() and raise HTTPException(400)."
+}
