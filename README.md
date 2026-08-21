@@ -62,20 +62,42 @@ GitHub PR ──webhook──▶ FastAPI /api/webhooks/github
 
 ## Setup
 
+**→ Full step-by-step local guide: [SETUP.md](SETUP.md)** (prerequisites, credentials, Supabase
+provisioning, webhook tunnelling, verification and troubleshooting).
+
+Quick version:
+
 ```bash
 # backend
-cp backend/.env.example backend/.env    # fill in your keys
+python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r backend/requirements.txt
+npm install -g eslint                   # optional, for JavaScript diffs
+cp backend/.env.example backend/.env    # fill in your keys
+
+# supabase schema (pgvector + tables + similarity RPC)
+python scripts/bootstrap_supabase.py
 
 # frontend
 cp frontend/.env.example frontend/.env
 cd frontend && yarn install
 ```
 
+Run it:
+
+```bash
+cd backend && uvicorn server:app --port 8001 --reload    # terminal 1
+cd frontend && yarn start                                 # terminal 2
+```
+
+Verify: `curl -s http://localhost:8001/api/system/health | python3 -m json.tool`
+
 ### Supabase provisioning
-`GET /api/system/supabase-sql` returns the bootstrap SQL (pgvector extension, three tables, the
-`match_security_policies()` RPC and the hnsw index). Paste it into the Supabase SQL editor, or set
-`SUPABASE_DB_URL` to the **Transaction Pooler** URI (port 6543) and the app can apply it directly.
+Run `python scripts/bootstrap_supabase.py` (uses `SUPABASE_DB_URL`, the **Transaction Pooler** URI
+on port 6543). It creates the pgvector extension, three tables, the `match_security_policies()` RPC
+and an hnsw cosine index — and is idempotent.
+
+No pooler URI? `GET /api/system/supabase-sql` returns the same DDL; paste it into the Supabase SQL
+editor. The dashboard also has a *Copy SQL* button under **Settings**.
 
 ### GitHub webhook
 | Field | Value |
